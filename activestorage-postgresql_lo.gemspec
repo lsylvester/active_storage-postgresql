@@ -9,9 +9,8 @@ Gem::Specification.new do |s|
   s.version     = Activestorage::PostgresqlLo::VERSION
   s.authors     = ["Lachlan Sylvester"]
   s.email       = ["lachlan.sylvester@publicisfrontfoot.com.au"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Activestorage::PostgresqlLo."
-  s.description = "TODO: Description of Activestorage::PostgresqlLo."
+  s.homepage    = "https://github.com/lsylvester/activestorage-postgresql_lo"
+  s.summary     = "Postgresql Lo Adapter for Active Storage"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
