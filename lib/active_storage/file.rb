@@ -11,9 +11,9 @@ class ActiveStorage::File < ActiveRecord::Base
     find_by!(key: key).open(&block)
   end
 
-  def open
+  def open(*args)
     transaction do
-      @lo = self.class.connection.raw_connection.lo_open(oid, ::PG::INV_WRITE)
+      @lo = self.class.connection.raw_connection.lo_open(oid, *args)
       yield self
       self.class.connection.raw_connection.lo_close(@lo)
     end
