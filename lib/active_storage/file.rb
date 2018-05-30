@@ -13,9 +13,12 @@ class ActiveStorage::File < ActiveRecord::Base
 
   def open(*args)
     transaction do
-      @lo = self.class.connection.raw_connection.lo_open(oid, *args)
-      yield self
-      self.class.connection.raw_connection.lo_close(@lo)
+      begin
+        @lo = self.class.connection.raw_connection.lo_open(oid, *args)
+        yield(self)
+      ensure
+        self.class.connection.raw_connection.lo_close(@lo) if @lo
+      end
     end
   end
 

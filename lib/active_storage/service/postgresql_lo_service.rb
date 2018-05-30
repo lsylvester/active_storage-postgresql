@@ -26,21 +26,17 @@ module ActiveStorage
           end
         end
       else
-        content = nil
         ActiveStorage::File.open(key) do |file|
-          content = file.read
+          file.read
         end
-        content
       end
     end
 
     def download_chunk(key, range)
-      content = nil
       ActiveStorage::File.open(key) do |file|
         file.seek(range.first)
-        content = file.read(range.size)
+        file.read(range.size)
       end
-      content
     end
 
     def exist?(key)
