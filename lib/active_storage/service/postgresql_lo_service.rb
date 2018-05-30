@@ -20,6 +20,7 @@ module ActiveStorage
         ActiveStorage::File.connection.raw_connection.lo_write(lo, content)
         ActiveStorage::File.connection.raw_connection.lo_close(lo)
       end
+      ensure_integrity_of(key, checksum) if checksum
     end
 
     # Return the content of the file at the +key+.
@@ -86,6 +87,15 @@ module ActiveStorage
     def delete_prefixed(prefix)
       ActiveStorage::File.where("path like ?", "#{prefix}%").pluck(:key).each do |key|
         delete(key)
+      end
+    end
+
+    protected
+
+    def ensure_integrity_of(key, checksum)
+      unless Digest::MD5.base64digest(download(key)) == checksum
+        delete key
+        raise ActiveStorage::IntegrityError
       end
     end
   end
