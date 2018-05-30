@@ -9,7 +9,6 @@ module ActiveStorage
     def initialize(**options)
     end
 
-    # ensure a match when the upload has completed or raise an ActiveStorage::IntegrityError.
     def upload(key, io, checksum: nil)
       ActiveStorage::File.create!(key: key).open(::PG::INV_WRITE) do |file|
         file.write(io.read)
@@ -17,7 +16,6 @@ module ActiveStorage
       ensure_integrity_of(key, checksum) if checksum
     end
 
-    # Return the content of the file at the +key+.
     def download(key)
       if block_given?
         ActiveStorage::File.open(key) do |file|
