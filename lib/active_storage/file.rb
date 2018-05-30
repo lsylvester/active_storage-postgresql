@@ -22,8 +22,6 @@ class ActiveStorage::File < ActiveRecord::Base
     end
   end
 
-  attr_reader :lo
-
   def write(content)
     self.class.connection.raw_connection.lo_write(@lo, content)
     update(size: self.class.connection.raw_connection.lo_tell(@lo))
