@@ -55,6 +55,21 @@ module ActiveStorage
       end
     end
 
+    def download_chunk(key, range)
+      content = nil
+      ActiveStorage::File.transaction do
+        file = ActiveStorage::File.find_by!(key: key)
+        lo = ActiveStorage::File.connection.raw_connection.lo_open(file.oid)
+        size = ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 2)
+        ActiveStorage::File.connection.raw_connection.lo_lseek(lo, range.first, 0)
+        bytes_to_read = range.size
+
+        content = ActiveStorage::File.connection.raw_connection.lo_read(lo, bytes_to_read)
+        ActiveStorage::File.connection.raw_connection.lo_close(lo)
+      end
+      content
+    end
+
     def exist?(key)
       ActiveStorage::File.where(key: key).exists?
     end
