@@ -48,18 +48,11 @@ module ActiveStorage
     end
 
     def delete(key)
-      ActiveStorage::File.transaction do
-        ActiveStorage::File.find_by(key: key).try do |file|
-          ActiveStorage::File.connection.raw_connection.lo_unlink(file.oid)
-          file.destroy
-        end
-      end
+      ActiveStorage::File.find_by(key: key).try(&:destroy)
     end
 
     def delete_prefixed(prefix)
-      ActiveStorage::File.where("path like ?", "#{prefix}%").pluck(:key).each do |key|
-        delete(key)
-      end
+      ActiveStorage::File.prefixed_with(prefix).destroy_all
     end
 
     protected

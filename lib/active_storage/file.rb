@@ -34,4 +34,10 @@ class ActiveStorage::File < ActiveRecord::Base
     self.class.connection.raw_connection.lo_seek(@lo, position, 0)
   end
 
+  before_destroy do
+    self.class.connection.raw_connection.lo_unlink(oid)
+  end
+
+  scope :prefixed_with, -> prefix { where("path like ?", "#{prefix}%") }
+
 end
