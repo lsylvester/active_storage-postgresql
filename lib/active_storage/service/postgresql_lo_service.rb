@@ -25,17 +25,38 @@ module ActiveStorage
     # Return the content of the file at the +key+.
     def download(key)
       content = nil
-      ActiveStorage::File.transaction do
-        file = ActiveStorage::File.find_by!(key: key)
-        lo = ActiveStorage::File.connection.raw_connection.lo_open(file.oid)
+      if block_given?
+        ActiveStorage::File.transaction do
+          file = ActiveStorage::File.find_by!(key: key)
+          lo = ActiveStorage::File.connection.raw_connection.lo_open(file.oid)
 
-        size = ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 2)
-        ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 0)
+          size = ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 2)
+          ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 0)
 
-        content = ActiveStorage::File.connection.raw_connection.lo_read(lo, size)
-        ActiveStorage::File.connection.raw_connection.lo_close(lo)
+          amount_to_read = [size, 5.megabytes].min
+          while amount_to_read > 0
+            yield  ActiveStorage::File.connection.raw_connection.lo_read(lo, amount_to_read)
+            size -= amount_to_read
+            amount_to_read = [size, 5.megabytes].min
+          end
+          ActiveStorage::File.connection.raw_connection.lo_close(lo)
+        end
+      else
+        ActiveStorage::File.transaction do
+          file = ActiveStorage::File.find_by!(key: key)
+          lo = ActiveStorage::File.connection.raw_connection.lo_open(file.oid)
+
+          size = ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 2)
+          ActiveStorage::File.connection.raw_connection.lo_lseek(lo, 0, 0)
+          content = ActiveStorage::File.connection.raw_connection.lo_read(lo, size)
+          ActiveStorage::File.connection.raw_connection.lo_close(lo)
+        end
+        content
       end
-      content
+    end
+
+    def exist?(key)
+      ActiveStorage::File.where(key: key).exists?
     end
 
     def delete(key)
