@@ -30,4 +30,8 @@ class ActiveStorage::File < ActiveRecord::Base
     self.class.connection.raw_connection.lo_read(@lo, bytes)
   end
 
+  def seek(position)
+    self.class.connection.raw_connection.lo_seek(@lo, position, 0)
+  end
+
 end
