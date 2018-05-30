@@ -11,14 +11,8 @@ module ActiveStorage
 
     # ensure a match when the upload has completed or raise an ActiveStorage::IntegrityError.
     def upload(key, io, checksum: nil)
-      ActiveStorage::File.transaction do
-        oid = ActiveStorage::File.connection.raw_connection.lo_creat
-
-        ActiveStorage::File.create!(oid: oid, key: key)
-        lo = ActiveStorage::File.connection.raw_connection.lo_open(oid, ::PG::INV_WRITE)
-        content = io.read
-        ActiveStorage::File.connection.raw_connection.lo_write(lo, content)
-        ActiveStorage::File.connection.raw_connection.lo_close(lo)
+      ActiveStorage::File.create!(key: key).open do |file|
+        file.write(io.read)
       end
       ensure_integrity_of(key, checksum) if checksum
     end
