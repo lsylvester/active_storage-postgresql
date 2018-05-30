@@ -82,5 +82,11 @@ module ActiveStorage
         end
       end
     end
+
+    def delete_prefixed(prefix)
+      ActiveStorage::File.where("path like ?", "#{prefix}%").pluck(:key).each do |key|
+        delete(key)
+      end
+    end
   end
 end

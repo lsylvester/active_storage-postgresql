@@ -96,7 +96,6 @@ module ActiveStorage::Service::SharedServiceTests
         @service.upload("a/a/a", StringIO.new(FIXTURE_DATA))
         @service.upload("a/a/b", StringIO.new(FIXTURE_DATA))
         @service.upload("a/b/a", StringIO.new(FIXTURE_DATA))
-
         @service.delete_prefixed("a/a/")
         assert_not @service.exist?("a/a/a")
         assert_not @service.exist?("a/a/b")
