@@ -10,43 +10,59 @@ module ActiveStorage
     end
 
     def upload(key, io, checksum: nil)
-      ActiveStorage::File.create!(key: key).open(::PG::INV_WRITE) do |file|
-        file.write(io.read)
+      instrument :upload, key: key, checksum: checksum do
+        ActiveStorage::File.create!(key: key).open(::PG::INV_WRITE) do |file|
+          file.write(io.read)
+        end
+        ensure_integrity_of(key, checksum) if checksum
       end
-      ensure_integrity_of(key, checksum) if checksum
     end
 
     def download(key)
       if block_given?
-        ActiveStorage::File.open(key) do |file|
-          while data = file.read(5.megabytes)
-            yield data
+        instrument :streaming_download, key: key do
+          ActiveStorage::File.open(key) do |file|
+            while data = file.read(5.megabytes)
+              yield data
+            end
           end
         end
       else
-        ActiveStorage::File.open(key) do |file|
-          file.read
+        instrument :download, key: key do
+          ActiveStorage::File.open(key) do |file|
+            file.read
+          end
         end
       end
     end
 
     def download_chunk(key, range)
-      ActiveStorage::File.open(key) do |file|
-        file.seek(range.first)
-        file.read(range.size)
+      instrument :download_chunk, key: key, range: range do
+        ActiveStorage::File.open(key) do |file|
+          file.seek(range.first)
+          file.read(range.size)
+        end
+      end
+    end
+
+    def delete(key)
+      instrument :delete, key: key do
+        ActiveStorage::File.find_by(key: key).try(&:destroy)
       end
     end
 
     def exist?(key)
-      ActiveStorage::File.where(key: key).exists?
-    end
-
-    def delete(key)
-      ActiveStorage::File.find_by(key: key).try(&:destroy)
+      instrument :exist, key: key do |payload|
+        answer = ActiveStorage::File.where(key: key).exists?
+        payload[:exist] = answer
+        answer
+      end
     end
 
     def delete_prefixed(prefix)
-      ActiveStorage::File.prefixed_with(prefix).destroy_all
+      instrument :delete_prefixed, prefix: prefix do
+        ActiveStorage::File.prefixed_with(prefix).destroy_all
+      end
     end
 
     protected
