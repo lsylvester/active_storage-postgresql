@@ -23,6 +23,11 @@ class ActiveStorage::File < ActiveRecord::Base
 
   def write(content)
     self.class.connection.raw_connection.lo_write(@lo, content)
+    update(size: self.class.connection.raw_connection.lo_tell(@lo))
+  end
+
+  def read(bytes=size)
+    self.class.connection.raw_connection.lo_read(@lo, bytes)
   end
 
 end

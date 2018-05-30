@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 2018_05_30_020601) do
   create_table "active_storage_files", force: :cascade do |t|
     t.integer "oid"
     t.string "path"
+    t.integer "size"
   end
 
 end
