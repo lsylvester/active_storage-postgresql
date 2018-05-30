@@ -1,7 +1,8 @@
-require 'test_helper'
+# frozen_string_literal: true
 
-class Activestorage::PostgresqlLo::Test < ActiveSupport::TestCase
-  test "truth" do
-    assert_kind_of Module, Activestorage::PostgresqlLo
-  end
+require "activestorage/shared_service_tests"
+class ActiveStorage::Service::PostgresqlLoServiceTest < ActiveSupport::TestCase
+  SERVICE  = ActiveStorage::Service.configure(:postgresql_lo, {postgresql_lo: {service: "PostgresqlLo"}})
+
+  include ActiveStorage::Service::SharedServiceTests
 end
