@@ -1,12 +1,12 @@
 $:.push File.expand_path("lib", __dir__)
 
 # Maintain your gem's version:
-require "activestorage/postgresql/version"
+require "active_storage/postgresql/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "activestorage-postgresql"
-  s.version     = Activestorage::PostgreSQL::VERSION
+  s.version     = ActiveStorage::PostgreSQL::VERSION
   s.authors     = ["Lachlan Sylvester"]
   s.email       = ["lachlan.sylvester@publicisfrontfoot.com.au"]
   s.homepage    = "https://github.com/lsylvester/activestorage-postgresql"

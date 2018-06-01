@@ -3,7 +3,7 @@ require_relative 'boot'
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
-require "activestorage/postgresql"
+require "active_storage/postgresql"
 
 module Dummy
   class Application < Rails::Application

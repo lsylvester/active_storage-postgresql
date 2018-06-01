@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_storage/file'
+require 'active_storage/postgresql/file'
 
 module ActiveStorage
   # Wraps a local disk path as an Active Storage service. See ActiveStorage::Service for the generic API

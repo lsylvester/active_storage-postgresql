@@ -1,4 +1,4 @@
-module Activestorage
+module ActiveStorage
   module PostgreSQL
     VERSION = '0.1.0'
   end
