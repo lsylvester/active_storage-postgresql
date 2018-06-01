@@ -1,5 +1,5 @@
 module Activestorage
-  module PostgresqlLo
+  module PostgreSQL
     class Railtie < ::Rails::Railtie
     end
   end

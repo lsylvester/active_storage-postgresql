@@ -1,5 +1,5 @@
 module Activestorage
-  module PostgresqlLo
+  module PostgreSQL
     VERSION = '0.1.0'
   end
 end

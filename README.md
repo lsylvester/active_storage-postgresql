@@ -1,4 +1,4 @@
-# Activestorage::PostgresqlLo
+# Activestorage::PostgreSQL
 Short description and motivation.
 
 ## Usage
@@ -8,7 +8,7 @@ How to use my plugin.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'activestorage-postgresql_lo'
+gem 'activestorage-postgresql'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ $ bundle
 
 Or install it yourself as:
 ```bash
-$ gem install activestorage-postgresql_lo
+$ gem install activestorage-postgresql
 ```
 
 ## Contributing

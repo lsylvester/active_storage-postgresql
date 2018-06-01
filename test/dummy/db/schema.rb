@@ -13,7 +13,6 @@
 ActiveRecord::Schema.define(version: 2018_05_30_020601) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "ltree"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -37,7 +36,7 @@ ActiveRecord::Schema.define(version: 2018_05_30_020601) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_files", force: :cascade do |t|
+  create_table "active_storage_postgresql_files", force: :cascade do |t|
     t.integer "oid"
     t.string "path"
     t.integer "size"
