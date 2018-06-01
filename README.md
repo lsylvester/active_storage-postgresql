@@ -6,17 +6,12 @@ ActiveStorage Service to store files PostgesSQL.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'activestorage-postgresql'
+gem 'activestorage-postgresql', git: "https://github.com/lsylvester/activestorage-postgresql"
 ```
 
 And then execute:
 ```bash
 $ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install activestorage-postgresql
 ```
 
 In config/storage.yml set PostgreSQL as the service
