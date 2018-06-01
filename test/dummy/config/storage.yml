@@ -1,8 +1,8 @@
 test:
-  service: PostgresqlLo
+  service: PostgreSQL
 
 local:
-  service: PostgresqlLo
+  service: PostgreSQL
 
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
