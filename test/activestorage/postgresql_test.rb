@@ -22,7 +22,6 @@ class ActiveStorage::Service::PostgreSQLServiceTest < ActiveSupport::TestCase
       file.write(data)
       file.rewind
       @service.upload(key, file, checksum: Digest::MD5.base64digest(data))
-
       assert_equal data, @service.download(key)
     ensure
       @service.delete key

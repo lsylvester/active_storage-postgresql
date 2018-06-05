@@ -4,7 +4,7 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   alias_attribute :key, :path
 
   before_create do
-    self.oid = self.class.connection.raw_connection.lo_creat
+    self.oid ||= self.class.connection.raw_connection.lo_creat
   end
 
   def self.open(key, &block)
@@ -33,6 +33,18 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
 
   def seek(position)
     self.class.connection.raw_connection.lo_seek(@lo, position, 0)
+  end
+
+  def import(path)
+    self.oid = self.class.connection.raw_connection.lo_import(path)
+  end
+
+  def size
+    current_position = self.class.connection.raw_connection.lo_tell(@lo)
+    self.class.connection.raw_connection.lo_seek(@lo, 0,2)
+    self.class.connection.raw_connection.lo_tell(@lo).tap do
+      self.class.connection.raw_connection.lo_seek(@lo, current_position,0)
+    end
   end
 
   before_destroy do
