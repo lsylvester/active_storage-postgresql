@@ -11,10 +11,23 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil)
       instrument :upload, key: key, checksum: checksum do
-        ActiveStorage::PostgreSQL::File.create!(key: key).open(::PG::INV_WRITE) do |file|
-          file.write(io.read)
+        if io.respond_to?(:to_path)
+          raise "Path"
+        else
+          md5 = Digest::MD5.new
+          ActiveStorage::PostgreSQL::File.create!(key: key).open(::PG::INV_WRITE) do |file|
+            while data = io.read(5.megabytes)
+              md5.update(data)
+              file.write(data)
+            end
+          end
+          if checksum
+            unless md5.base64digest == checksum
+              delete key
+              raise ActiveStorage::IntegrityError
+            end
+          end
         end
-        ensure_integrity_of(key, checksum) if checksum
       end
     end
 
@@ -110,13 +123,6 @@ module ActiveStorage
     end
 
     protected
-
-    def ensure_integrity_of(key, checksum)
-      unless Digest::MD5.base64digest(download(key)) == checksum
-        delete key
-        raise ActiveStorage::IntegrityError
-      end
-    end
 
     def url_helpers
       @url_helpers ||= Rails.application.routes.url_helpers
