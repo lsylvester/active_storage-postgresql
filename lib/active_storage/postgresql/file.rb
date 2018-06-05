@@ -1,8 +1,6 @@
 class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   self.table_name = "active_storage_postgresql_files"
 
-  alias_attribute :key, :path
-
   before_create do
     self.oid ||= self.class.connection.raw_connection.lo_creat
   end
@@ -24,7 +22,6 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
 
   def write(content)
     self.class.connection.raw_connection.lo_write(@lo, content)
-    update(size: self.class.connection.raw_connection.lo_tell(@lo))
   end
 
   def read(bytes=size)
@@ -51,6 +48,6 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
     self.class.connection.raw_connection.lo_unlink(oid)
   end
 
-  scope :prefixed_with, -> prefix { where("path like ?", "#{prefix}%") }
+  scope :prefixed_with, -> prefix { where("key like ?", "#{prefix}%") }
 
 end
