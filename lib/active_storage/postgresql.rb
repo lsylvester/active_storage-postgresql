@@ -1,4 +1,4 @@
-require "active_storage/postgresql/railtie"
+require "active_storage/postgresql/engine"
 
 module ActiveStorage
   module PostgreSQL
