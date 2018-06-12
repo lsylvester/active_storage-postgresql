@@ -5,11 +5,11 @@ require "active_storage/postgresql/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "activestorage-postgresql"
+  s.name        = "active_storage-postgresql"
   s.version     = ActiveStorage::PostgreSQL::VERSION
   s.authors     = ["Lachlan Sylvester"]
   s.email       = ["lachlan.sylvester@publicisfrontfoot.com.au"]
-  s.homepage    = "https://github.com/lsylvester/activestorage-postgresql"
+  s.homepage    = "https://github.com/lsylvester/active_storage-postgresql"
   s.summary     = "PostgreSQL Adapter for Active Storage"
   s.license     = "MIT"
 

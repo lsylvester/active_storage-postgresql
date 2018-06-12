@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "activestorage/shared_service_tests"
+require "active_storage/shared_service_tests"
 class ActiveStorage::Service::PostgreSQLServiceTest < ActiveSupport::TestCase
   SERVICE  = ActiveStorage::Service.configure(:postgresql, {postgresql: {service: "PostgreSQL"}})
 

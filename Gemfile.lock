@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    activestorage-postgresql (0.1.0)
+    active_storage-postgresql (0.1.0)
       pg (~> 1.0.0)
       rails (~> 5.2.0)
 
@@ -125,7 +125,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activestorage-postgresql!
+  active_storage-postgresql!
   pry
 
 BUNDLED WITH
