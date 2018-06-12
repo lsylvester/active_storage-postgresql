@@ -1,6 +1,8 @@
 # ActiveStorage::PostgreSQL
 
-ActiveStorage Service to store files PostgesSQL.
+ActiveStorage Service to store files PostgeSQL.
+
+
 
 ## Installation
 Add this line to your application's Gemfile:
