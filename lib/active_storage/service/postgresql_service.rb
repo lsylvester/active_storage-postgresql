@@ -3,7 +3,7 @@
 require 'active_storage/postgresql/file'
 
 module ActiveStorage
-  # Wraps a local disk path as an Active Storage service. See ActiveStorage::Service for the generic API
+  # Wraps a PostgreSQL database as an Active Storage service. See ActiveStorage::Service for the generic API
   # documentation that applies to all services.
   class Service::PostgreSQLService < Service
     def initialize(**options)
@@ -11,24 +11,29 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil)
       instrument :upload, key: key, checksum: checksum do
-        if io.respond_to?(:to_path)
-          ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
-            file.import(io.to_path)
-          end
-          if checksum
-            unless Digest::MD5.file(io.to_path).base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
+        ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
+          # Try directly importing the IO via its filename.
+          if io.respond_to?(:to_path)
+            md5 = Digest::MD5.file(io.to_path)
+            begin
+              file.import(io.to_path)
+              imported_file = true
+            rescue PG::Error => e
+              imported_file = false
             end
           end
-        else
-          md5 = Digest::MD5.new
-          ActiveStorage::PostgreSQL::File.create!(key: key).open(::PG::INV_WRITE) do |file|
-            while data = io.read(5.megabytes)
-              md5.update(data)
-              file.write(data)
+
+          # If a direct import was not possible, copy the file in chunks.
+          unless imported_file
+            md5 = Digest::MD5.new
+            file.open(::PG::INV_WRITE) do |pg_lo|
+              while data = io.read(5.megabytes)
+                md5.update(data)
+                pg_lo.write(data)
+              end
             end
           end
+
           if checksum
             unless md5.base64digest == checksum
               delete key
