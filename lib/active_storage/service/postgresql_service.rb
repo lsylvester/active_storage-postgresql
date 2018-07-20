@@ -11,34 +11,34 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil)
       instrument :upload, key: key, checksum: checksum do
-        ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
-          # Try directly importing the IO via its filename.
-          if io.respond_to?(:to_path)
-            md5 = Digest::MD5.file(io.to_path)
-            begin
+        # Try directly importing the IO via its filename.
+        if io.respond_to?(:to_path)
+          md5 = Digest::MD5.file(io.to_path)
+          begin
+            file = ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
               file.import(io.to_path)
-              imported_file = true
-            rescue PG::Error => e
-              imported_file = false
+            end
+          rescue PG::Error => e
+            # Even if lo_import fails, the code below might still work.
+          end
+        end
+
+        # If a direct import was not possible, copy data in chunks.
+        if file.nil?
+          md5 = Digest::MD5.new
+          file = ActiveStorage::PostgreSQL::File.create!(key: key)
+          file.open(::PG::INV_WRITE) do |file|
+            while data = io.read(5.megabytes)
+              md5.update(data)
+              file.write(data)
             end
           end
+        end
 
-          # If a direct import was not possible, copy the file in chunks.
-          unless imported_file
-            md5 = Digest::MD5.new
-            file.open(::PG::INV_WRITE) do |pg_lo|
-              while data = io.read(5.megabytes)
-                md5.update(data)
-                pg_lo.write(data)
-              end
-            end
-          end
-
-          if checksum
-            unless md5.base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
-            end
+        if checksum
+          unless md5.base64digest == checksum
+            delete key
+            raise ActiveStorage::IntegrityError
           end
         end
       end
