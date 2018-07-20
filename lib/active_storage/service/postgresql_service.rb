@@ -3,7 +3,7 @@
 require 'active_storage/postgresql/file'
 
 module ActiveStorage
-  # Wraps a local disk path as an Active Storage service. See ActiveStorage::Service for the generic API
+  # Wraps a PostgreSQL database as an Active Storage service. See ActiveStorage::Service for the generic API
   # documentation that applies to all services.
   class Service::PostgreSQLService < Service
     def initialize(**options)
