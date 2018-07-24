@@ -1,0 +1,5 @@
+language: ruby
+sudo: false
+
+services:
+  - postgresql
