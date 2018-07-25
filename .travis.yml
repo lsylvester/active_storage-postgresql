@@ -1,0 +1,8 @@
+language: ruby
+sudo: false
+
+before_script:
+  - createdb activestorage_pglo_test
+
+services:
+  - postgresql
