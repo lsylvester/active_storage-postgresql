@@ -3,7 +3,7 @@
 require 'active_storage/postgresql/file'
 
 module ActiveStorage
-  # Wraps a local disk path as an Active Storage service. See ActiveStorage::Service for the generic API
+  # Wraps a PostgreSQL database as an Active Storage service. See ActiveStorage::Service for the generic API
   # documentation that applies to all services.
   class Service::PostgreSQLService < Service
     def initialize(**options)
@@ -11,29 +11,34 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil)
       instrument :upload, key: key, checksum: checksum do
+        # Try directly importing the IO via its filename.
         if io.respond_to?(:to_path)
-          ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
-            file.import(io.to_path)
-          end
-          if checksum
-            unless Digest::MD5.file(io.to_path).base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
+          md5 = Digest::MD5.file(io.to_path)
+          begin
+            file = ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
+              file.import(io.to_path)
             end
+          rescue PG::Error => e
+            # Even if lo_import fails, the code below might still work.
           end
-        else
+        end
+
+        # If a direct import was not possible, copy data in chunks.
+        if file.nil?
           md5 = Digest::MD5.new
-          ActiveStorage::PostgreSQL::File.create!(key: key).open(::PG::INV_WRITE) do |file|
+          file = ActiveStorage::PostgreSQL::File.create!(key: key)
+          file.open(::PG::INV_WRITE) do |file|
             while data = io.read(5.megabytes)
               md5.update(data)
               file.write(data)
             end
           end
-          if checksum
-            unless md5.base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
-            end
+        end
+
+        if checksum
+          unless md5.base64digest == checksum
+            delete key
+            raise ActiveStorage::IntegrityError
           end
         end
       end
