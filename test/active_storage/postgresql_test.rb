@@ -2,6 +2,7 @@
 
 require "active_storage/shared_service_tests"
 class ActiveStorage::Service::PostgreSQLServiceTest < ActiveSupport::TestCase
+  self.use_transactional_tests = false
   SERVICE  = ActiveStorage::Service.configure(:postgresql, {postgresql: {service: "PostgreSQL"}})
 
   setup do
