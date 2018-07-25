@@ -54,6 +54,7 @@ GEM
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
+    database_cleaner (1.7.0)
     erubi (1.7.1)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
@@ -126,6 +127,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_storage-postgresql!
+  database_cleaner
   pry
 
 BUNDLED WITH

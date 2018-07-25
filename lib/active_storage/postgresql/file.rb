@@ -33,7 +33,9 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   end
 
   def import(path)
-    self.oid = lo_import(path)
+    transaction do
+      self.oid = lo_import(path)
+    end
   end
 
   def size
