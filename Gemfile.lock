@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     active_storage-postgresql (0.1.0)
-      pg (~> 1.0.0)
-      rails (~> 5.2.0)
+      pg (~> 1.0)
+      rails (~> 5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -127,8 +127,8 @@ PLATFORMS
 
 DEPENDENCIES
   active_storage-postgresql!
-  database_cleaner
-  pry
+  database_cleaner (~> 1.7)
+  pry (~> 0.11)
 
 BUNDLED WITH
    1.16.1
