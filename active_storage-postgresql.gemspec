@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.name        = "active_storage-postgresql"
   s.version     = ActiveStorage::PostgreSQL::VERSION
   s.authors     = ["Lachlan Sylvester"]
-  s.email       = ["lachlan.sylvester@publicisfrontfoot.com.au"]
+  s.email       = ["lachlan.sylvester@hypothetical.com.au"]
   s.homepage    = "https://github.com/lsylvester/active_storage-postgresql"
   s.summary     = "PostgreSQL Adapter for Active Storage"
   s.license     = "MIT"
