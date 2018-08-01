@@ -7,13 +7,13 @@ More information about Large Objects can be found [here](https://www.postgresql.
 
 This allows use of ActiveStorage on hosting platforms with ephemeral file systems such as Heroku without relying on third party storage services.
 
-There are [some limits](https://dba.stackexchange.com/questions/127270/what-are-the-limits-of-postgresqls-large-object-facility) to the storage of Large Objects in PostgerSQL, so this is only recommended for prototyping and very small sites. 
+There are [some limits](https://dba.stackexchange.com/questions/127270/what-are-the-limits-of-postgresqls-large-object-facility) to the storage of Large Objects in PostgerSQL, so this is only recommended for prototyping and very small sites.
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_storage-postgresql', git: "https://github.com/lsylvester/active_storage-postgresql"
+gem 'active_storage-postgresql'
 ```
 
 And then execute:
