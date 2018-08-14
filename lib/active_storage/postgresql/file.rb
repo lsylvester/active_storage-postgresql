@@ -1,6 +1,7 @@
 class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   self.table_name = "active_storage_postgresql_files"
 
+  attribute :oid, :integer, default: ->{ connection.raw_connection.lo_creat }
   attr_accessor :checksum, :io
 
   before_create :write_or_import, if: :io
@@ -14,7 +15,6 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
         end
       end
     else
-      self.oid ||= lo_creat
       md5 = Digest::MD5.new
       open(::PG::INV_WRITE) do |file|
         while data = io.read(5.megabytes)
