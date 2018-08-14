@@ -50,9 +50,11 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
     end
   end
 
-  before_destroy do
-    self.class.connection.raw_connection.lo_unlink(oid)
+  def unlink
+    lo_unlink(oid)
   end
+
+  before_destroy :unlink
 
   delegate :lo_seek, :lo_tell, :lo_import, :lo_read, :lo_write, :lo_open,
       :lo_unlink, :lo_close, :lo_creat, to: 'self.class.connection.raw_connection'
