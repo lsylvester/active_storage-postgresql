@@ -28,8 +28,8 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
     lo_read(@lo, bytes)
   end
 
-  def seek(position)
-    lo_seek(@lo, position, 0)
+  def seek(position, whence=PG::SEEK_SET)
+    lo_seek(@lo, position, whence)
   end
 
   def import(path)
@@ -38,11 +38,15 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
     end
   end
 
+  def tell
+    lo_tell(@lo)
+  end
+
   def size
-    current_position = lo_tell(@lo)
-    lo_seek(@lo, 0,2)
-    lo_tell(@lo).tap do
-      lo_seek(@lo, current_position,0)
+    current_position = tell
+    seek(0, PG::SEEK_END)
+    tell.tap do
+      seek(current_position)
     end
   end
 
