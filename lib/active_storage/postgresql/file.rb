@@ -3,32 +3,29 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
 
   attribute :oid, :integer, default: ->{ connection.raw_connection.lo_creat }
   attr_accessor :checksum, :io
+  attr_writer :digest
+
+  def digest
+    @digest ||= Digest::MD5.new
+  end
 
   before_create :write_or_import, if: :io
+  before_create :verify_checksum, if: :checksum
 
   def write_or_import
     if io.respond_to?(:to_path)
       import(io.to_path)
-      if checksum
-        unless Digest::MD5.file(io.to_path).base64digest == checksum
-          raise ActiveStorage::IntegrityError
-        end
-      end
     else
-      md5 = Digest::MD5.new
       open(::PG::INV_WRITE) do |file|
         while data = io.read(5.megabytes)
-          md5.update(data)
-          file.write(data)
-        end
-      end
-
-      if checksum
-        unless md5.base64digest == checksum
-          raise ActiveStorage::IntegrityError
+          write(data)
         end
       end
     end
+  end
+
+  def verify_checksum
+    raise ActiveStorage::IntegrityError unless digest.base64digest == checksum
   end
 
   def self.open(key, &block)
@@ -48,6 +45,7 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
 
   def write(content)
     lo_write(@lo, content)
+    digest.update(content)
   end
 
   def read(bytes=size)
@@ -60,6 +58,7 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
 
   def import(path)
     self.oid = lo_import(path)
+    self.digest = Digest::MD5.file(path)
   end
 
   def tell
