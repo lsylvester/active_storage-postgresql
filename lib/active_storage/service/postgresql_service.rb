@@ -11,31 +11,7 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil)
       instrument :upload, key: key, checksum: checksum do
-        if io.respond_to?(:to_path)
-          ActiveStorage::PostgreSQL::File.create!(key: key) do |file|
-            file.import(io.to_path)
-          end
-          if checksum
-            unless Digest::MD5.file(io.to_path).base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
-            end
-          end
-        else
-          md5 = Digest::MD5.new
-          ActiveStorage::PostgreSQL::File.create!(key: key).open(::PG::INV_WRITE) do |file|
-            while data = io.read(5.megabytes)
-              md5.update(data)
-              file.write(data)
-            end
-          end
-          if checksum
-            unless md5.base64digest == checksum
-              delete key
-              raise ActiveStorage::IntegrityError
-            end
-          end
-        end
+        ActiveStorage::PostgreSQL::File.create!(key: key, io: io, checksum: checksum)
       end
     end
 

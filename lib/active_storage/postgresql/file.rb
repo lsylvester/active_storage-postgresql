@@ -1,8 +1,34 @@
 class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   self.table_name = "active_storage_postgresql_files"
 
-  before_create do
-    self.oid ||= lo_creat
+  attr_accessor :checksum, :io
+
+  before_create :write_or_import, if: :io
+
+  def write_or_import
+    if io.respond_to?(:to_path)
+      import(io.to_path)
+      if checksum
+        unless Digest::MD5.file(io.to_path).base64digest == checksum
+          raise ActiveStorage::IntegrityError
+        end
+      end
+    else
+      self.oid ||= lo_creat
+      md5 = Digest::MD5.new
+      open(::PG::INV_WRITE) do |file|
+        while data = io.read(5.megabytes)
+          md5.update(data)
+          file.write(data)
+        end
+      end
+
+      if checksum
+        unless md5.base64digest == checksum
+          raise ActiveStorage::IntegrityError
+        end
+      end
+    end
   end
 
   def self.open(key, &block)
@@ -33,9 +59,7 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   end
 
   def import(path)
-    transaction do
-      self.oid = lo_import(path)
-    end
+    self.oid = lo_import(path)
   end
 
   def tell
