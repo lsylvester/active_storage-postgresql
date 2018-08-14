@@ -1,5 +1,8 @@
 # ActiveStorage::PostgreSQL
 
+[![Gem Version](https://badge.fury.io/rb/active_storage-postgresql.svg)](https://badge.fury.io/rb/active_storage-postgresql)
+[![Build Status](https://travis-ci.com/lsylvester/active_storage-postgresql.svg?branch=master)](https://travis-ci.com/lsylvester/active_storage-postgresql)
+
 ActiveStorage Service to store files PostgeSQL.
 
 Files are stored in PostgreSQL as Large Objects, which provide streaming style access.
