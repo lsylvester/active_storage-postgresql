@@ -9,7 +9,7 @@ module ActiveStorage
     def initialize(**options)
     end
 
-    def upload(key, io, checksum: nil)
+    def upload(key, io, checksum: nil, **)
       instrument :upload, key: key, checksum: checksum do
         ActiveStorage::PostgreSQL::File.create!(key: key, io: io, checksum: checksum)
       end
