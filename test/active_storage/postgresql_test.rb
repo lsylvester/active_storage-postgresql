@@ -15,6 +15,17 @@ class ActiveStorage::Service::PostgreSQLServiceTest < ActiveSupport::TestCase
 
   include ActiveStorage::Service::SharedServiceTests
 
+  test "uploading with service metadata" do
+    begin
+      key  = SecureRandom.base58(24)
+      data = "Something else entirely!"
+      @service.upload(key, StringIO.new(data), checksum: Digest::MD5.base64digest(data), irrelevant_metadata: "ignored")
+      assert_equal data, @service.download(key)
+    ensure
+      @service.delete key
+    end
+  end
+
   test "uploading file with integrity" do
     begin
       key  = SecureRandom.base58(24)
