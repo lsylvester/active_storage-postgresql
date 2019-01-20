@@ -4,6 +4,7 @@
 # This means using expiring, signed URLs that are meant for immediate access, not permanent linking.
 # Always go through the BlobsController, or your own authenticated controller, rather than directly
 # to the service url.
+
 class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
   include ActionController::Live
 
@@ -31,6 +32,8 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
       else
         head :unprocessable_entity
       end
+    else
+      head :not_found
     end
   rescue ActiveStorage::IntegrityError
     head :unprocessable_entity

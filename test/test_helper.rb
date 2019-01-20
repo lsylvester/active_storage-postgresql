@@ -25,6 +25,25 @@ ActiveSupport::TestCase.setup do
   DatabaseCleaner.start
 end
 
+class ActiveSupport::TestCase
+
+  setup do
+    ActiveStorage::Current.host = "https://example.com"
+  end
+
+  teardown do
+    ActiveStorage::Current.reset
+  end
+
+  def create_blob(data: "Hello world!", filename: "hello.txt", content_type: "text/plain", identify: true)
+    ActiveStorage::Blob.create_after_upload! io: StringIO.new(data), filename: filename, content_type: content_type
+  end
+
+  def create_blob_before_direct_upload(filename: "hello.txt", byte_size:, checksum:, content_type: "text/plain")
+    ActiveStorage::Blob.create_before_direct_upload! filename: filename, byte_size: byte_size, checksum: checksum, content_type: content_type
+  end
+end
+
 ActiveSupport::TestCase.teardown do
   ActiveRecord::Base.transaction do
     ActiveRecord::Base.connection.select_values("SELECT oid from pg_largeobject_metadata").each do |oid|
