@@ -6,7 +6,6 @@
 # to the service url.
 
 class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
-  include ActionController::Live
 
   skip_forgery_protection
 
@@ -14,14 +13,35 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
     if key = decode_verified_key
       response.headers["Content-Type"] = params[:content_type] || DEFAULT_SEND_FILE_TYPE
       response.headers["Content-Disposition"] = params[:disposition] || DEFAULT_SEND_FILE_DISPOSITION
-      postgresql_service.download key[:key] do |chunk|
-        response.stream.write chunk
+      size = ActiveStorage::PostgreSQL::File.open(key[:key], &:size)
+
+      ranges = Rack::Utils.get_byte_ranges(request.get_header('HTTP_RANGE'), size)
+
+
+      if ranges.nil? || ranges.length > 1
+        # # No ranges, or multiple ranges (which we don't support):
+        # # TODO: Support multiple byte-ranges
+        self.status = :ok
+        range = 0..size-1
+
+      elsif ranges.empty?
+        # # Unsatisfiable. Return error, and file size:
+        # response = fail(416, "Byte range unsatisfiable")
+        # response[1]["Content-Range"] = "bytes */#{size}"
+        # return response
+      else
+        # # Partial content:
+        range = ranges[0]
+        self.status = :partial_content
+        response.headers["Content-Range"] = "bytes #{range.begin}-#{range.end}/#{size}"
+        # size = range.end - range.begin + 1
       end
+      self.response_body = postgresql_service.download_chunk(key[:key], range)
     else
       head :not_found
     end
-  ensure
-    response.stream.close
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
   end
 
   def update
@@ -37,8 +57,6 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
     end
   rescue ActiveStorage::IntegrityError
     head :unprocessable_entity
-  ensure
-    response.stream.close
   end
 
   private

@@ -16,6 +16,7 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
   test "showing blob as attachment" do
     blob = create_blob
     get blob.service_url(disposition: :attachment)
+
     assert_response :ok
     assert_equal "attachment; filename=\"hello.txt\"; filename*=UTF-8''hello.txt", response.headers["Content-Disposition"]
     assert_equal "text/plain", response.headers["Content-Type"]
