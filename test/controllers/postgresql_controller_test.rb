@@ -32,6 +32,12 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
     assert_equal " worl", response.body
   end
 
+  test "showing blob with empty range" do
+    blob = create_blob
+    get blob.service_url, headers: { "Range" => "bytes=100-" }
+    assert_response 416
+  end
+
   test "showing blob that does not exist" do
     blob = create_blob
     blob.delete

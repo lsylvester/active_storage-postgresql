@@ -17,7 +17,6 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
 
       ranges = Rack::Utils.get_byte_ranges(request.get_header('HTTP_RANGE'), size)
 
-
       if ranges.nil? || ranges.length > 1
         # # No ranges, or multiple ranges (which we don't support):
         # # TODO: Support multiple byte-ranges
@@ -25,16 +24,12 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
         range = 0..size-1
 
       elsif ranges.empty?
-        # # Unsatisfiable. Return error, and file size:
-        # response = fail(416, "Byte range unsatisfiable")
-        # response[1]["Content-Range"] = "bytes */#{size}"
-        # return response
+        head 416, content_range: "bytes */#{size}"
+        return
       else
-        # # Partial content:
         range = ranges[0]
         self.status = :partial_content
         response.headers["Content-Range"] = "bytes #{range.begin}-#{range.end}/#{size}"
-        # size = range.end - range.begin + 1
       end
       self.response_body = postgresql_service.download_chunk(key[:key], range)
     else
