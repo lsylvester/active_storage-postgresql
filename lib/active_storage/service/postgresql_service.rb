@@ -75,7 +75,7 @@ module ActiveStorage
           purpose: :blob_key }
         )
 
-        generated_url = url_helpers.rails_disk_service_url(verified_key_with_expiration,
+        generated_url = url_helpers.rails_postgresql_service_url(verified_key_with_expiration,
           host: current_host,
           disposition: content_disposition,
           content_type: content_type,
@@ -100,7 +100,7 @@ module ActiveStorage
           purpose: :blob_token }
         )
 
-        generated_url = url_helpers.update_rails_disk_service_url(verified_token_with_expiration, host: current_host)
+        generated_url = url_helpers.update_rails_postgresql_service_url(verified_token_with_expiration, host: current_host)
 
         payload[:url] = generated_url
 
