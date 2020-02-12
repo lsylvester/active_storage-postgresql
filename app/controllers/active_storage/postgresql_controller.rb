@@ -5,6 +5,8 @@
 # Always go through the BlobsController, or your own authenticated controller, rather than directly
 # to the service url.
 
+require 'active_storage/postgresql/file'
+
 class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
 
   skip_forgery_protection
