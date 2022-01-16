@@ -76,11 +76,13 @@ GEM
     concurrent-ruby (1.1.9)
     crass (1.0.6)
     database_cleaner (1.99.0)
+    digest (3.1.0)
     erubi (1.10.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
+    io-wait (0.2.1)
     loofah (2.13.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -90,6 +92,13 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     minitest (5.15.0)
+    net-protocol (0.1.2)
+      io-wait
+      timeout
+    net-smtp (0.3.1)
+      digest
+      net-protocol
+      timeout
     nio4r (2.5.8)
     nokogiri (1.13.1-x86_64-darwin)
       racc (~> 1.4)
@@ -136,6 +145,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     thor (1.2.1)
+    timeout (0.2.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     websocket-driver (0.7.5)
@@ -150,6 +160,7 @@ DEPENDENCIES
   active_storage-postgresql!
   appraisal
   database_cleaner (~> 1.7)
+  net-smtp
   pry (~> 0.11)
   rails (~> 6.1.0)
 
