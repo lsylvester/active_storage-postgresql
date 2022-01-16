@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2018_06_05_041857) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name"
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
