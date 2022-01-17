@@ -3,10 +3,11 @@
 require "test_helper"
 
 class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
+
   test "showing blob inline" do
     blob = create_blob(filename: "hello.jpg", content_type: "image/jpg")
 
-    get blob.service_url
+    get blob.send(url_method)
     assert_response :ok
     assert_equal "inline; filename=\"hello.jpg\"; filename*=UTF-8''hello.jpg", response.headers["Content-Disposition"]
     assert_equal "image/jpg", response.headers["Content-Type"]
@@ -15,7 +16,7 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
 
   test "showing blob as attachment" do
     blob = create_blob
-    get blob.service_url(disposition: :attachment)
+    get blob.send(url_method, disposition: :attachment)
 
     assert_response :ok
     assert_equal "attachment; filename=\"hello.txt\"; filename*=UTF-8''hello.txt", response.headers["Content-Disposition"]
@@ -25,7 +26,7 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
 
   test "showing blob range" do
     blob = create_blob
-    get blob.service_url, headers: { "Range" => "bytes=5-9" }
+    get blob.send(url_method), headers: { "Range" => "bytes=5-9" }
     assert_response :partial_content
     assert_equal "attachment; filename=\"hello.txt\"; filename*=UTF-8''hello.txt", response.headers["Content-Disposition"]
     assert_equal "text/plain", response.headers["Content-Type"]
@@ -34,7 +35,7 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
 
   test "showing blob with empty range" do
     blob = create_blob
-    get blob.service_url, headers: { "Range" => "bytes=100-" }
+    get blob.send(url_method), headers: { "Range" => "bytes=100-" }
     assert_response 416
   end
 
@@ -42,7 +43,7 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
     blob = create_blob
     blob.delete
 
-    get blob.service_url
+    get blob.send(url_method)
   end
 
   test "showing blob with invalid key" do
@@ -101,5 +102,9 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
     put update_rails_postgresql_service_url(encoded_token: "invalid"),
       params: "Something else entirely!", headers: { "Content-Type" => "text/plain" }
     assert_response :not_found
+  end
+
+  def url_method
+    ActiveStorage::Blob.method_defined?(:url) ? :url : :service_url
   end
 end

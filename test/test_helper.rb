@@ -36,7 +36,7 @@ class ActiveSupport::TestCase
   end
 
   def create_blob(data: "Hello world!", filename: "hello.txt", content_type: "text/plain", identify: true)
-    ActiveStorage::Blob.create_after_upload! io: StringIO.new(data), filename: filename, content_type: content_type
+    ActiveStorage::Blob.create_and_upload! io: StringIO.new(data), filename: filename, content_type: content_type
   end
 
   def create_blob_before_direct_upload(filename: "hello.txt", byte_size:, checksum:, content_type: "text/plain")
