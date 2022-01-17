@@ -98,6 +98,28 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
     assert_not blob.service.exist?(blob.key)
   end
 
+
+  test "showing public blob" do
+    with_service(:local_public) do
+      blob = create_blob(content_type: "image/jpeg")
+
+      get blob.send(url_method)
+      assert_response :ok
+      assert_equal "image/jpeg", response.headers["Content-Type"]
+      assert_equal "Hello world!", response.body
+    end
+  end
+
+  test "showing public blob variant" do
+    with_service(:local_public) do
+      blob = create_file_blob.variant(resize_to_limit: [100, 100]).processed
+
+      get blob.blob.send(url_method)
+      assert_response :ok
+      assert_equal "image/jpeg", response.headers["Content-Type"]
+    end
+  end
+
   test "directly uploading blob with invalid token" do
     put update_rails_postgresql_service_url(encoded_token: "invalid"),
       params: "Something else entirely!", headers: { "Content-Type" => "text/plain" }

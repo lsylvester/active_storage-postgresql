@@ -6,7 +6,8 @@ module ActiveStorage
   # Wraps a PostgreSQL database as an Active Storage service. See ActiveStorage::Service for the generic API
   # documentation that applies to all services.
   class Service::PostgreSQLService < Service
-    def initialize(**options)
+    def initialize(public: false, **options)
+      @public = public
     end
 
     def upload(key, io, checksum: nil, **)
@@ -72,8 +73,12 @@ module ActiveStorage
 
     def url(key, **options)
       super
-    rescue NotImplementedError
-      private_url(key, **options)
+    rescue NotImplementedError, ArgumentError
+      if @public
+        public_url(key, **options)
+      else
+        private_url(key, **options)
+      end
     end
 
     def generate_url(key, expires_in:, filename:, disposition:, content_type:)
