@@ -42,6 +42,22 @@ class ActiveSupport::TestCase
   def create_blob_before_direct_upload(filename: "hello.txt", byte_size:, checksum:, content_type: "text/plain")
     ActiveStorage::Blob.create_before_direct_upload! filename: filename, byte_size: byte_size, checksum: checksum, content_type: content_type
   end
+
+  def with_service(service_name)
+    previous_service = ActiveStorage::Blob.service
+
+    skip unless ActiveStorage::Blob.respond_to?(:services)
+
+    ActiveStorage::Blob.service = service_name ? ActiveStorage::Blob.services.fetch(service_name) : nil
+
+    yield
+  ensure
+    ActiveStorage::Blob.service = previous_service
+  end
+
+  def create_file_blob(key: nil, filename: "racecar.jpg", content_type: "image/jpeg", metadata: nil, service_name: nil, record: nil)
+    ActiveStorage::Blob.create_and_upload! io: file_fixture(filename).open, filename: filename, content_type: content_type, metadata: metadata, service_name: service_name, record: record
+  end
 end
 
 ActiveSupport::TestCase.teardown do
