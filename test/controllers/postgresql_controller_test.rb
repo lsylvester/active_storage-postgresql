@@ -5,12 +5,12 @@ require "test_helper"
 class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
 
   test "showing blob inline" do
-    blob = create_blob(filename: "hello.jpg", content_type: "image/jpg")
+    blob = create_blob(filename: "hello.jpg", content_type: "image/jpeg")
 
     get blob.send(url_method)
     assert_response :ok
     assert_equal "inline; filename=\"hello.jpg\"; filename*=UTF-8''hello.jpg", response.headers["Content-Disposition"]
-    assert_equal "image/jpg", response.headers["Content-Type"]
+    assert_equal "image/jpeg", response.headers["Content-Type"]
     assert_equal "Hello world!", response.body
   end
 
