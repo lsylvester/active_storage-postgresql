@@ -95,7 +95,7 @@ module ActiveStorage
         )
 
         generated_url = url_helpers.rails_postgresql_service_url(verified_key_with_expiration,
-          host: current_host,
+          **url_options,
           disposition: content_disposition,
           content_type: content_type,
           filename: filename
@@ -119,7 +119,7 @@ module ActiveStorage
           purpose: :blob_token
         )
 
-        generated_url = url_helpers.update_rails_postgresql_service_url(verified_token_with_expiration, host: current_host)
+        generated_url = url_helpers.update_rails_postgresql_service_url(verified_token_with_expiration, **url_options)
 
         payload[:url] = generated_url
 
@@ -137,8 +137,12 @@ module ActiveStorage
       @url_helpers ||= Rails.application.routes.url_helpers
     end
 
-    def current_host
-      ActiveStorage::Current.host
+    def url_options
+      if ActiveStorage::Current.respond_to?(:url_options)
+        ActiveStorage::Current.url_options
+      else
+        { host: ActiveStorage::Current.host }
+      end
     end
   end
 end

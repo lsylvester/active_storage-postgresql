@@ -28,7 +28,11 @@ end
 class ActiveSupport::TestCase
 
   setup do
-    ActiveStorage::Current.host = "https://example.com"
+    if ActiveStorage::Current.respond_to?(:url_options)
+      ActiveStorage::Current.url_options = {host: 'example.com', protocol: 'https'}
+    else
+      ActiveStorage::Current.host = "https://example.com"
+    end
   end
 
   teardown do

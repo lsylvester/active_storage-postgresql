@@ -6,7 +6,11 @@ class ActiveStorage::Service::PostgreSQLServiceTest < ActiveSupport::TestCase
   SERVICE  = ActiveStorage::Service.configure(:postgresql, {postgresql: {service: "PostgreSQL"}})
 
   setup do
-    ActiveStorage::Current.host = "https://example.com"
+    if ActiveStorage::Current.respond_to?(:url_options=)
+      ActiveStorage::Current.url_options = {host: "https://example.com", protocol: "https"}
+    else
+      ActiveStorage::Current.host = "https://example.com"
+    end
   end
 
   teardown do
