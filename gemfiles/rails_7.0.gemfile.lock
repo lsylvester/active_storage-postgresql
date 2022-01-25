@@ -3,7 +3,7 @@ PATH
   specs:
     active_storage-postgresql (0.2.1)
       pg (>= 1.0)
-      rails (>= 5.2)
+      rails (>= 6.0)
 
 GEM
   remote: https://rubygems.org/
