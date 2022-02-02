@@ -51,6 +51,22 @@ class ActiveStorage::PostgresqlControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "not allowing to set disposition from params" do
+    blob = create_blob(filename: "hello.jpg", content_type: "image/jpeg")
+
+    get blob.send(url_method), params: { disposition: :attachment }
+    assert_response :ok
+    assert_equal "inline; filename=\"hello.jpg\"; filename*=UTF-8''hello.jpg", response.headers["Content-Disposition"]
+  end
+
+  test "not allowing to set content-type from params" do
+    blob = create_blob(filename: "hello.jpg", content_type: "image/jpeg")
+
+    get blob.send(url_method), params: { content_type: 'text/html' }
+    assert_response :ok
+    assert_equal "image/jpeg", response.headers["Content-Type"]
+  end
+
 
   test "directly uploading blob with integrity" do
     data = "Something else entirely!"
