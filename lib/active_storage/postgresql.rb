@@ -2,6 +2,9 @@ require "active_storage/postgresql/engine"
 
 module ActiveStorage
   module PostgreSQL
-    # Your code goes here...
+    extend ActiveSupport::Autoload
+
+    autoload :File, "active_storage/postgresql/file"
+
   end
 end

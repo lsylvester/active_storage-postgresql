@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_storage/postgresql/file'
-
 module ActiveStorage
   # Wraps a PostgreSQL database as an Active Storage service. See ActiveStorage::Service for the generic API
   # documentation that applies to all services.
