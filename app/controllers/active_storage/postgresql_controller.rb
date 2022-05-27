@@ -11,8 +11,8 @@ class ActiveStorage::PostgresqlController < ActiveStorage::BaseController
 
   def show
     if key = decode_verified_key
-      response.headers["Content-Type"] = params[:content_type] || DEFAULT_SEND_FILE_TYPE
-      response.headers["Content-Disposition"] = params[:disposition] || DEFAULT_SEND_FILE_DISPOSITION
+      response.headers["Content-Type"] = key[:content_type] || DEFAULT_SEND_FILE_TYPE
+      response.headers["Content-Disposition"] = key[:disposition] || DEFAULT_SEND_FILE_DISPOSITION
       size = ActiveStorage::PostgreSQL::File.open(key[:key], &:size)
 
       ranges = Rack::Utils.get_byte_ranges(request.get_header('HTTP_RANGE'), size)
