@@ -1,7 +1,7 @@
 # ActiveStorage::PostgreSQL
 
 [![Gem Version](https://badge.fury.io/rb/active_storage-postgresql.svg)](https://badge.fury.io/rb/active_storage-postgresql)
-[![Build Status](https://travis-ci.com/lsylvester/active_storage-postgresql.svg?branch=master)](https://travis-ci.com/lsylvester/active_storage-postgresql)
+[![Build Status](https://travis-ci.com/lsylvester/active_storage-postgresql.svg?branch=main)](https://travis-ci.com/lsylvester/active_storage-postgresql)
 
 ActiveStorage Service to store files PostgeSQL.
 
@@ -51,4 +51,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the ActiveStorage::PostgreSQL project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/lsylvester/active_storage-postgresql/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the ActiveStorage::PostgreSQL project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/lsylvester/active_storage-postgresql/blob/main/CODE_OF_CONDUCT.md).
