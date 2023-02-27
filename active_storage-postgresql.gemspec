@@ -16,7 +16,10 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails", ">= 6.0"
-  s.add_dependency "pg", ">= 1.0", "< 1.3"
+  s.add_dependency "pg", ">= 1.0", "< 2.0",
+    # Avoid incompatible pg versions, see: https://github.com/ged/ruby-pg/pull/498
+    "!= 1.3.0", "!= 1.3.1", "!= 1.3.2", "!= 1.3.3", "!= 1.3.4", "!= 1.3.5",
+    "!= 1.4.0", "!= 1.4.1", "!= 1.4.2", "!= 1.4.3", "!= 1.4.4", "!= 1.4.5"
 
   s.add_development_dependency "pry", "~> 0.11"
   s.add_development_dependency "database_cleaner", "~> 1.7"
