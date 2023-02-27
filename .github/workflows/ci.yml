@@ -1,0 +1,33 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu, macos, windows ]
+        ruby: [ '2.5', ruby-head ]
+    runs-on: ${{ matrix.os }}-latest
+    env:
+      PGSERVICE: postgres
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - uses: ikalnytskyi/action-setup-postgres@v4
+
+    - run: bundle install
+    - run: createdb activestorage_pglo_test
+
+    # For some reason the db migrations needs to be executed explicitly on Windows
+    - name: Copy and run migrations on Windows
+      if: matrix.os == 'windows'
+      run: |
+        ridk exec cp -rv db/migrate test/dummy/db/
+        rake -f test/dummy/Rakefile active_storage:install db:migrate RAILS_ENV=test
+    - run: bundle exec rake test
