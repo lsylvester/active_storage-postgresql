@@ -15,5 +15,4 @@ gem 'image_processing', '~> 1.2'
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-# Required on Windows only
-gem 'tzinfo-data'
+gem 'tzinfo-data', platform: "windows"
