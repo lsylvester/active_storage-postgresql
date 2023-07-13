@@ -1,5 +1,10 @@
 # ActiveStorage::PostgreSQL Changes
 
+0.3.1
+---------
+
+- Allow use if pg 1.4.6
+
 0.3.0
 ---------
 
