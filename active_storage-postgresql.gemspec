@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
     "!= 1.4.0", "!= 1.4.1", "!= 1.4.2", "!= 1.4.3", "!= 1.4.4", "!= 1.4.5"
 
   s.add_development_dependency "pry", "~> 0.11"
-  s.add_development_dependency "database_cleaner", "~> 1.7"
+  s.add_development_dependency "database_cleaner", "~> 2.0"
   s.add_development_dependency "appraisal"
 end

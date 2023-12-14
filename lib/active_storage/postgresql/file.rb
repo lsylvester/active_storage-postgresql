@@ -13,7 +13,7 @@ class ActiveStorage::PostgreSQL::File < ActiveRecord::Base
   before_create :verify_checksum, if: :checksum
 
   def write_or_import
-    if io.respond_to?(:to_path)
+    if io.respond_to?(:to_path) && File.exist?(io.to_path)
       import(io.to_path)
     else
       open(::PG::INV_WRITE) do |file|
