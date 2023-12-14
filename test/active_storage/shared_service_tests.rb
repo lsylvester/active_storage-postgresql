@@ -33,6 +33,25 @@ module ActiveStorage::Service::SharedServiceTests
       end
     end
 
+    test "uploading a non-persisted (but still readable) file" do
+      begin
+        key  = SecureRandom.base58(24)
+        data = "Something else entirely!"
+        file = Tempfile.open("upload")
+        file.write(data)
+        file.rewind
+        file.delete
+
+        assert !File.exist?(file.to_path)
+
+        @service.upload(key, file, checksum: Digest::MD5.base64digest(data))
+
+        assert_equal data, @service.download(key)
+      ensure
+        @service.delete key
+      end
+    end
+
     test "uploading without integrity" do
       begin
         key  = SecureRandom.base58(24)
